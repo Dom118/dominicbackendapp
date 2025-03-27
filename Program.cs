@@ -8,7 +8,7 @@ using Azure.Identity;
 var builder = WebApplication.CreateBuilder(args);
 
 // Set the HTTPS port
-builder.WebHost.UseSetting("https_port", "7073");
+// builder.WebHost.UseSetting("https_port", "7073");
 
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
