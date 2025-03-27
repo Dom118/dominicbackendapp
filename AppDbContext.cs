@@ -16,10 +16,6 @@ namespace MinimalX.Data
         public DbSet<ShoppingCart> ShoppingCart {get; set;}
         public DbSet<Order> Orders {get; set;}
         public DbSet<OrderItem> OrderItems {get; set;}
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=tcp:dominic-server.database.windows.net,1433;Initial Catalog=Dominic-DB;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default");
-        }
     }
 }
         
