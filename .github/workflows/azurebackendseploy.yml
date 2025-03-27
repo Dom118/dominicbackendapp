@@ -1,4 +1,4 @@
-name: Deploy ASP.NET Core Web API to Azure App Service
+name: Deploy ASP.NET Core Web API to Azure App Service 2
 
 on:
   workflow_dispatch: # Allows the workflow to be triggered manually
