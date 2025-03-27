@@ -18,7 +18,6 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowBlazorClient", policy =>
     {
         policy.WithOrigins("https://dominicfrontendapp-dgdugkhndkh7e8et.eastus2-01.azurewebsites.net")
-        policy.WithOrigins("https://dominicbackendapp-gvewgradhvbke4fa.eastus2-01.azurewebsites.net")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
