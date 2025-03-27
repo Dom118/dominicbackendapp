@@ -1,0 +1,8 @@
+POST https://localhost:7073/api/products
+Content-Type: application/json
+
+{
+    "name": "Charger", 
+    "price": 12.99,
+    "stockquantity": 50
+}
