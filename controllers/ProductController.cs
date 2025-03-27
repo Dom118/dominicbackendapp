@@ -96,5 +96,33 @@ namespace MinimalX.ProductsControllers
             return Ok(new { product.ImageUrl, product.ImageFileName });
         }
 
+        [HttpGet("test-blob")]
+        public async Task<IActionResult> TestBlobConnectivity()
+        {
+        try
+ 
+            {
+ 
+                var blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("AzureBlobStorage"));
+ 
+                var containerClient = blobServiceClient.GetBlobContainerClient("product-images");
+ 
+                await containerClient.CreateIfNotExistsAsync();
+       
+                var blobs = new List<string>();
+                await foreach (var blobItem in containerClient.GetBlobsAsync())
+                {
+                    blobs.Add(blobItem.Name);
+                }
+                return Ok(new { Message = "Connected to blob storage successfully", BlobList = blobs });
+ 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Error connecting to blob storage", Error = ex.Message });
+            }
+ 
+        }
+
     }
 }

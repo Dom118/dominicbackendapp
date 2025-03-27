@@ -165,3 +165,4 @@ C:\Users\2391439\Documents\Learning\EcommerceApp\back-end\bin\Debug\net9.0\Azure
 C:\Users\2391439\Documents\Learning\EcommerceApp\back-end\bin\Debug\net9.0\Azure.Storage.Common.dll
 C:\Users\2391439\Documents\Learning\EcommerceApp\back-end\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\2391439\Documents\Learning\EcommerceApp\back-end\bin\Debug\net9.0\System.IO.Hashing.dll
+C:\Users\2391439\Documents\Learning\EcommerceApp\back-end\obj\Debug\net9.0\EcommerceApp.sourcelink.json
