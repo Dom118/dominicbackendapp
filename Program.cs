@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorClient", policy =>
     {
-        policy.WithOrigins("https://localhost:7074")
+        policy.WithOrigins("https://dominicfrontendapp-dgdugkhndkh7e8et.eastus2-01.azurewebsites.net")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
