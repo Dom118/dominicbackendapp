@@ -68,7 +68,6 @@ namespace MinimalX.ProductsControllers
         }
 
         [HttpPost("{id}/upload-image")]
-        [Authorize(Roles = "administrator, vendor")]
         public async Task<ActionResult> UploadImage(int id, IFormFile file)
         {
             var product = await _context.Products.FindAsync(id);
@@ -87,41 +86,12 @@ namespace MinimalX.ProductsControllers
             {
                 await blobClient.UploadAsync(stream);
             }
-
             
             product.ImageUrl = blobClient.Uri.ToString();
             product.ImageFileName = fileName;
             await _context.SaveChangesAsync();
 
             return Ok(new { product.ImageUrl, product.ImageFileName });
-        }
-
-        [HttpGet("test-blob")]
-        public async Task<IActionResult> TestBlobConnectivity()
-        {
-        try
- 
-            {
- 
-                var blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("AzureBlobStorage"));
- 
-                var containerClient = blobServiceClient.GetBlobContainerClient("product-images");
- 
-                await containerClient.CreateIfNotExistsAsync();
-       
-                var blobs = new List<string>();
-                await foreach (var blobItem in containerClient.GetBlobsAsync())
-                {
-                    blobs.Add(blobItem.Name);
-                }
-                return Ok(new { Message = "Connected to blob storage successfully", BlobList = blobs });
- 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "Error connecting to blob storage", Error = ex.Message });
-            }
- 
         }
 
     }
