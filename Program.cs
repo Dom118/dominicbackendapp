@@ -10,102 +10,61 @@ using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
  
+ 
+// CORS policy allowing your Blazor app (adjust the URL as needed)
+ 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorClient", policy =>
     {
         policy.WithOrigins("https://dominicfrontendapp-dgdugkhndkh7e8et.eastus2-01.azurewebsites.net")
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowAnyMethod();
     });
 });
  
- 
-builder.Services.AddDbContext<AppDbContext>(options =>
+// Register your DbContext
+builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
  
+// Register IHttpClientFactory (needed for calling GitHub endpoints)
+builder.Services.AddHttpClient();
  
-var jwtKey = builder.Configuration["JwtSettings:SecretKey"];
-var key = Encoding.ASCII.GetBytes(jwtKey);
+// Add Application Insights and Profiler
+// builder.Services.AddApplicationInsightsTelemetry();
+// builder.Services.AddServiceProfiler();
  
-builder.Services
-    .AddAuthentication(options =>
+// Configure JWT Bearer Authentication only
+var jwtSecret = builder.Configuration["Jwt:Secret"];
+var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = "GitHub";
-    })
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOptions =>
-    {
-        jwtOptions.RequireHttpsMetadata = false;
-        jwtOptions.SaveToken = true;
-        jwtOptions.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true
-        };
-    })
-    .AddOAuth("GitHub", options =>
-    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = key
+    };
+});
  
-        options.ClientId = builder.Configuration["GitHub:ClientId"];
-        options.ClientSecret = builder.Configuration["GitHub:ClientSecret"];
-        options.CallbackPath = "/signin-github"; // handle callback
-        options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
-        options.TokenEndpoint = "https://github.com/login/oauth/access_token";
-        options.UserInformationEndpoint = "https://api.github.com/user";
- 
- 
-        options.Scope.Add("read:user");
- 
-        options.ClaimActions.MapJsonKey("urn:github:login", "login");
-        options.ClaimActions.MapJsonKey("urn:github:email", "email");
-        options.ClaimActions.MapJsonKey("urn:github:avatar", "avatar_url");
- 
-        options.SaveTokens = true;
- 
-        options.Events = new OAuthEvents
-        {
-            OnCreatingTicket = async context =>
-            {
- 
-                var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-                request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", context.AccessToken);
- 
-                var response = await context.Backchannel.SendAsync(request);
-                var userJson = await response.Content.ReadAsStringAsync();
- 
- 
- 
-            }
-        };
-    });
- 
- 
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
  
 var app = builder.Build();
  
+app.UseHttpsRedirection();
 app.UseCors("AllowBlazorClient");
- 
- 
 app.UseAuthentication();
 app.UseAuthorization();
  
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
- 
 app.MapControllers();
-app.UseHttpsRedirection();
- 
 app.Run();
