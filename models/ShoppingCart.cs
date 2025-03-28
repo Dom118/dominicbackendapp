@@ -23,7 +23,7 @@ namespace ShoppingCartApi.Models
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("UserId")]
-        public virtual User? User { get; set; }
+        public virtual UserProfile? UserProfile { get; set; }
 
         [ForeignKey("ProductId")]
         public virtual Product? Product { get; set; }

@@ -27,7 +27,7 @@ namespace OrdersApi.Models
 
 
         [ForeignKey("UserId")]
-        public virtual User? User { get; set; }
+        public virtual UserProfile? UserProfile { get; set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; }
     }
     
