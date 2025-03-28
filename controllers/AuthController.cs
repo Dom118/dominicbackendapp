@@ -163,7 +163,7 @@ namespace AuthApi.Controllers
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/user");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             // GitHub requires a User-Agent header.
-            request.Headers.UserAgent.TryParseAdd("MyApp");
+            request.Headers.UserAgent.TryParseAdd("MinimalX Web App");
 
             var client = _httpClientFactory.CreateClient();
             var response = await client.SendAsync(request);
