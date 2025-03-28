@@ -1,39 +1,26 @@
 using System.ComponentModel.DataAnnotations;
-using OrdersApi.Models;
-using ShoppingCartApi.Models;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace UserApi.Models
 {
-    public class User
+    public class UserProfile
     {
-        [Key]
         public int Id { get; set; }
-
         [Required]
-        [StringLength(100)]
+        public string? GitHubId { get; set; }
+        [Required]
         public string? Username { get; set; }
-
-        [Required]
-        [StringLength(100)]
+        // Editable by the user
         public string? FirstName { get; set; }
-
-        [Required]
-        [StringLength(100)]
         public string? LastName { get; set; }
-    
-        [Required]
-        [StringLength(100)]
+        public string? Address { get; set; }
+        [EmailAddress]
         public string? Email { get; set; }
-
+        public string? PhoneNumber { get; set; }
+        // Role: "customer", "administrator", or "vendor"
         [Required]
-        [StringLength(100)]
-        public string? Password { get; set; }
-
-        [Required]
-        [StringLength(20)]
         public string? Role { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow; 
 
     }
 }
