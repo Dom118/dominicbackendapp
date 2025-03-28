@@ -1,34 +1,27 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ShoppingCartApi.Models;
 using OrderItemApi.Models;
-using UserApi.Models;
 
 
 namespace OrdersApi.Models
 {
-    public class Order
+ public class Order
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
-        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [Required]
-        [StringLength(100)]
-        public string? Status { get; set; } 
+        // e.g. "Pending", "Awaiting Payment", "Paid", "Failed"
+        public string Status { get; set; } = "Awaiting Payment";
 
-        [Column(TypeName ="decimal(10,2)")]
-        public decimal TotalAmount { get; set; } 
-        
-        public string? ShippingAddress { get; set; }
+        // Store the Stripe session ID to match in the webhook
+        public string? StripeSessionId { get; set; }
 
-
-        [ForeignKey("UserId")]
-        public virtual UserProfile? UserProfile { get; set; }
-        public virtual ICollection<OrderItem> OrderItems { get; set; }
+        public List<OrderItem> OrderItems { get; set; } = new();
     }
     
 }

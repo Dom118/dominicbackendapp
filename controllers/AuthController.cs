@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 
-namespace UserApi.Controllers
+namespace AuthApi.Controllers
 {
     [ApiController]
     [Route("auth")]
@@ -84,7 +84,7 @@ namespace UserApi.Controllers
             {
                 isNewUser = true;
 
-                string role = githubUser.login.Equals("trainerctm", StringComparison.OrdinalIgnoreCase)
+                string role = githubUser.login.Equals("Dom118", StringComparison.OrdinalIgnoreCase)
                     ? "administrator"
                     : "customer";
 

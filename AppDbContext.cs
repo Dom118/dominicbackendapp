@@ -13,9 +13,10 @@ namespace MinimalX.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
         public DbSet<UserProfile> Users {get; set;}
         public DbSet<Product> Products {get; set;}
-        public DbSet<ShoppingCart> ShoppingCart {get; set;}
-        public DbSet<Order> Orders {get; set;}
+        public DbSet<CartItem> ShoppingCart {get; set;}
         public DbSet<OrderItem> OrderItems {get; set;}
+        public DbSet<Order> Orders {get; set;}
+        
     }
 }
         

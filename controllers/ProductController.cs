@@ -23,10 +23,34 @@ namespace MinimalX.ProductsControllers
 
         // retrieve all products
         [HttpGet]
-        public async Task<IEnumerable<Product>> GetProducts() => await _context.Products.ToListAsync();
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(
+        [FromQuery] string? search,
+        [FromQuery] decimal? minPrice,
+        [FromQuery] decimal? maxPrice,
+        [FromQuery] int? minStock,
+        [FromQuery] int? maxStock)
+        {
+            
+            var query = _context.Products.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(p => p.Name.Contains(search));
+            if (minPrice.HasValue)
+                query = query.Where(p => p.Price >= minPrice.Value);
+            if (maxPrice.HasValue)
+                query = query.Where(p => p.Price <= maxPrice.Value);
+            if (minStock.HasValue)
+                query = query.Where(p => p.StockQuantity >= minStock.Value);
+            if (maxStock.HasValue)
+                query = query.Where(p => p.StockQuantity <= maxStock.Value);
+
+            return Ok(await query.ToListAsync());
+        }
 
         // retrieve single product
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
@@ -35,6 +59,7 @@ namespace MinimalX.ProductsControllers
 
         // create a product
         [HttpPost]
+        [Authorize(Roles = "administrator")]
         public async Task<ActionResult<Product>> CreateProduct(Product product)
         {
             _context.Products.Add(product);
@@ -44,6 +69,7 @@ namespace MinimalX.ProductsControllers
 
         // update a product
         [HttpPut("{id}")]
+        [Authorize(Roles = "administrator, vendor")]
         public async Task<ActionResult> UpdateProduct(int id, Product product)
         {
             if (id != product.Id)
@@ -55,7 +81,8 @@ namespace MinimalX.ProductsControllers
         }
 
         // delete a product
-         [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "administrator")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
@@ -68,6 +95,7 @@ namespace MinimalX.ProductsControllers
         }
 
         [HttpPost("{id}/upload-image")]
+        [Authorize(Roles = "administrator, vendor")]
         public async Task<ActionResult> UploadImage(int id, IFormFile file)
         {
             var product = await _context.Products.FindAsync(id);
