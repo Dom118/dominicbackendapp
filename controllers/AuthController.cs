@@ -32,7 +32,7 @@ namespace AuthApi.Controllers
             var clientId = _config["GitHub:ClientId"]; // Retrieve ClientId from configuration
 
             // Retrieve ApiBaseUrl dynamically from configuration
-            var apiBaseUrl = _config["ApiBaseUrl"];
+            var apiBaseUrl = _config["dominicbackendapp-gvewgradhvbke4fa.eastus2-01.azurewebsites.net"];
             if (string.IsNullOrEmpty(apiBaseUrl))
         {
             throw new InvalidOperationException("ApiBaseUrl is not configured.");
