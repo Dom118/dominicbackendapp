@@ -30,23 +30,13 @@ namespace AuthApi.Controllers
         public IActionResult Login()
         {
             var clientId = _config["GitHub:ClientId"]; // Retrieve ClientId from configuration
+            // Use the callback endpoint that matches your routing and GitHub settings.
 
-            // Retrieve ApiBaseUrl dynamically from configuration
-            var apiBaseUrl = _config["ApiBaseUrl"];
-            if (string.IsNullOrEmpty(apiBaseUrl))
-        {
-            throw new InvalidOperationException("ApiBaseUrl is not configured.");
-        }
-
-        // Build the callback URL dynamically
-        var redirectUri = Uri.EscapeDataString($"{apiBaseUrl}/auth/callback");
-
-        // Generate a unique state value for additional security
-        var state = Guid.NewGuid().ToString();
-
-        // Build the GitHub authorization URL dynamically
-        var authorizationUrl = $"https://github.com/login/oauth/authorize?client_id={clientId}&redirect_uri={redirectUri}&state={state}";
-        return Redirect(authorizationUrl);
+            var redirectUri = Uri.EscapeDataString("https://dominicbackendapp-gvewgradhvbke4fa.eastus2-01.azurewebsites.net/auth/callback");
+            var state = Guid.NewGuid().ToString(); // You can store this value for additional security.
+            var authorizationUrl = $"https://github.com/login/oauth/authorize?client_id={clientId}&redirect_uri={redirectUri}&state={state}";
+            return Redirect(authorizationUrl);
+         
     }
 
 
@@ -117,15 +107,9 @@ namespace AuthApi.Controllers
         new Claim(ClaimTypes.Role, userProfile.Role)
     };
 
-        var feUrl = _config["FeUrl"]; // Fetch base URL dynamically from configuration
-        if (string.IsNullOrEmpty(feUrl))
-        {
-        throw new InvalidOperationException("FeUrl is not configured.");
-        }
-
-        var jwtToken = GenerateJwtToken(claims);
-        var redirectUrl = $"{feUrl}/tokenreceiver?token={jwtToken}&newUser={isNewUser}";
-        return Redirect(redirectUrl);
+            var jwtToken = GenerateJwtToken(claims);
+            var redirectUrl = $"https://dominicfrontendapp-dgdugkhndkh7e8et.eastus2-01.azurewebsites.net/tokenreceiver?token={jwtToken}&newUser={isNewUser}";
+            return Redirect(redirectUrl);
 
         }
 
