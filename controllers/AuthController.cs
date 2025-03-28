@@ -34,6 +34,7 @@ namespace AuthApi.Controllers
 
             var redirectUri = Uri.EscapeDataString("https://dominicbackendapp-gvewgradhvbke4fa.eastus2-01.azurewebsites.net/auth/callback");
             var state = Guid.NewGuid().ToString(); // You can store this value for additional security.
+            // var authorizationUrl = $"https://github.com/login/oauth/authorize?client_id={clientId}&redirect_uri={redirectUri}&state={state}";
             var authorizationUrl = $"https://github.com/login/oauth/authorize?client_id={clientId}&redirect_uri={redirectUri}&state={state}";
             return Redirect(authorizationUrl);
          
@@ -126,7 +127,6 @@ namespace AuthApi.Controllers
             };
             request.Content = new FormUrlEncodedContent(parameters);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
             var client = _httpClientFactory.CreateClient();
             var response = await client.SendAsync(request);
             if (!response.IsSuccessStatusCode)
@@ -141,14 +141,12 @@ namespace AuthApi.Controllers
             }
             return null;
         }
-
         private async Task<GitHubUser> GetGitHubUser(string token)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/user");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             // GitHub requires a User-Agent header.
-            request.Headers.UserAgent.TryParseAdd("MinimalX Web App");
-
+            request.Headers.UserAgent.TryParseAdd("MyApp");
             var client = _httpClientFactory.CreateClient();
             var response = await client.SendAsync(request);
             if (!response.IsSuccessStatusCode)
@@ -158,13 +156,11 @@ namespace AuthApi.Controllers
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<GitHubUser>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
-
         private string GenerateJwtToken(IEnumerable<Claim> claims)
         {
             var secretKey = _config["Jwt:Secret"];
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -173,17 +169,14 @@ namespace AuthApi.Controllers
                 Issuer = _config["Jwt:Issuer"],
                 Audience = _config["Jwt:Audience"]
             };
-
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
         public class GitHubUser
         {
             public long id { get; set; }
             public string login { get; set; }
-
         }
     }
-}
+} 
